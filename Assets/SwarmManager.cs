@@ -12,7 +12,7 @@ public class SwarmManager : MonoBehaviour
     public Vector2 Amount = new Vector2(2,5);
     public GameObject PrefabToSpawn;
     public float DistanceBetweenEntitys = 0.2f;
-    public List<ForceMovement> EntityList;
+    public List<Movement> EntityList;
 
     private void Awake()
     {
@@ -28,7 +28,7 @@ public class SwarmManager : MonoBehaviour
     
     void Start()
     {
-        EntityList = new List<ForceMovement>();
+        EntityList = new List<Movement>();
         Spawn();
     }
     
@@ -45,7 +45,7 @@ public class SwarmManager : MonoBehaviour
             for (int j = 0; j < Amount.x; j++)
             {
                 pos.y = j + DistanceBetweenEntitys;
-                EntityList.Add(Instantiate(PrefabToSpawn, pos, Quaternion.Euler(0, 0, Random.Range(0, 360))).GetComponent<ForceMovement>());
+                EntityList.Add(Instantiate(PrefabToSpawn, pos, Quaternion.Euler(0, 0, Random.Range(0, 360))).GetComponent<Movement>());
             }
             pos.x = i + DistanceBetweenEntitys;
             pos.y = 0;

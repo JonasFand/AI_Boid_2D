@@ -8,13 +8,25 @@ public enum SteeringBehaviour
 {
     RandomSteering,
     AttractorSteering,
+    ManagerSteering,
 }
 public class Movement : MonoBehaviour
 {
     [Range(0,5)]
     public float Speed = 30;
     public Vector2 Direction;
-    public Vector2 NewDirection;
+
+    private Vector2 newDirection;
+    public Vector2 NewDirection
+    {
+        get => newDirection;
+        set
+        {
+            newDirection = value;
+            ApplyNewDirection();
+        }
+        
+    }
     private BoxCollider2D region;
     [SerializeField]private PolygonCollider2D collider;
     [SerializeField]private float timer = 0;
@@ -32,14 +44,16 @@ public class Movement : MonoBehaviour
     {
         
         Direction = RandomVector();
-        NewDirection = RandomVector();
+        newDirection = RandomVector();
         float angle = Mathf.Atan2(Direction.y, Direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         startRotation = transform.rotation;
-        angle = Mathf.Atan2(NewDirection.y, NewDirection.x) * Mathf.Rad2Deg;
+        angle = Mathf.Atan2(newDirection.y, newDirection.x) * Mathf.Rad2Deg;
         newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
+
     
+
     void Update()
     {
         transform.position += transform.right * (Speed * Time.deltaTime);
@@ -51,13 +65,14 @@ public class Movement : MonoBehaviour
             case SteeringBehaviour.AttractorSteering:
                 AttractorSteering();
                 break;
+            case SteeringBehaviour.ManagerSteering:
+                ManagerSteering();
+                break;
         }
     }
 
     void RandomSteering()
     {
-        
-        
         if (timer<1)
         {
             //Direction = Vector2.Lerp(Direction, NewDirection,timer/3);
@@ -67,14 +82,16 @@ public class Movement : MonoBehaviour
         {
             startRotation = newRotation;
             transform.rotation = newRotation;
-            NewDirection = RandomVector();
-            float angle = Mathf.Atan2(NewDirection.y, NewDirection.x) * Mathf.Rad2Deg;
+            newDirection = RandomVector();
+            float angle = Mathf.Atan2(newDirection.y, newDirection.x) * Mathf.Rad2Deg;
             newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
             timer = 0;
         }
 
         timer += Time.deltaTime/5;
     }
+
+    
 
     void AttractorSteering()
     {
@@ -87,9 +104,9 @@ public class Movement : MonoBehaviour
             }
             else
             {
-                NewDirection = region.transform.position - transform.position.normalized;
+                newDirection = region.transform.position - transform.position.normalized;
                 startRotation = transform.rotation;
-                float angle = Mathf.Atan2(NewDirection.y, NewDirection.x) * Mathf.Rad2Deg;
+                float angle = Mathf.Atan2(newDirection.y, newDirection.x) * Mathf.Rad2Deg;
                 newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
                 timer = 0;
             }
@@ -98,21 +115,44 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            NewDirection = Vector2.zero;
+            newDirection = Vector2.zero;
             timer = 0;
         }
-        
+    }
+
+    void ManagerSteering()
+    {
+        if (timer < 1)
+        {
+            transform.rotation = Quaternion.Lerp(startRotation, newRotation, timer);
+        }
+        else
+        {
+            
+        }
+
+        timer += Time.deltaTime;
+    }
+
+    void ApplyNewDirection()
+    {
+        startRotation = transform.rotation;
+        float angle = Mathf.Atan2(newDirection.y, newDirection.x) * Mathf.Rad2Deg;
+        newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        timer = 0;
     }
 
     Vector2 RandomVector()
     {
         return new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
     }
-
     private void OnDrawGizmos()
     {
+        
+        //Gizmos.DrawWireCube(region.transform.position,region.size);
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(region.transform.position,region.size);
-        Gizmos.DrawLine(transform.position, transform.position+(Vector3)NewDirection*3);
+        Gizmos.DrawLine(transform.position, transform.position+(Vector3)newDirection*3);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position+transform.right*3);
     }
 }

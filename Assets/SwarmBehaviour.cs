@@ -19,8 +19,8 @@ public class SwarmBehaviour : MonoBehaviour
             timer = 0;
              foreach (var entity in SwarmManager.Instance.EntityList)
              {
-                 entity.ForceVector = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
-                 entity.ForceVector.Normalize();
+                 entity.NewDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+                 //entity.NewDirection.Normalize();
              }
         }
 
