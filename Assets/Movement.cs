@@ -27,8 +27,13 @@ public class Movement : MonoBehaviour
         }
         
     }
+
+    public Vector2 ForceVector = Vector2.zero;
+    public Vector2 UnitEvasionVector = Vector2.zero;
+    public float EvasionRadius;
     private BoxCollider2D region;
-    [SerializeField]private PolygonCollider2D collider;
+    [SerializeField]private CircleCollider2D evasionCollider;
+    [SerializeField]public PolygonCollider2D collider;
     [SerializeField]private float timer = 0;
     Quaternion startRotation;
     Quaternion newRotation;
@@ -42,13 +47,9 @@ public class Movement : MonoBehaviour
 
     void Start()
     {
-        
-        Direction = RandomVector();
         newDirection = RandomVector();
-        float angle = Mathf.Atan2(Direction.y, Direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        startRotation = transform.rotation;
-        angle = Mathf.Atan2(newDirection.y, newDirection.x) * Mathf.Rad2Deg;
+        ApplyNewDirection();
+        float angle = Mathf.Atan2(newDirection.y, newDirection.x) * Mathf.Rad2Deg;
         newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
@@ -73,6 +74,7 @@ public class Movement : MonoBehaviour
 
     void RandomSteering()
     {
+        Debug.Log("random");
         if (timer<1)
         {
             //Direction = Vector2.Lerp(Direction, NewDirection,timer/3);
@@ -95,6 +97,7 @@ public class Movement : MonoBehaviour
 
     void AttractorSteering()
     {
+        Debug.Log("attractor");
         if (collider.Distance(region).distance>0)
         {
             if (timer<1)
@@ -136,6 +139,15 @@ public class Movement : MonoBehaviour
 
     void ApplyNewDirection()
     {
+        Direction = transform.right;
+        newDirection = (ForceVector+newDirection)/2;
+        if (UnitEvasionVector.magnitude>0)
+        {
+            newDirection = (newDirection-UnitEvasionVector) / 2;
+        }
+        
+        
+        newDirection.Normalize();
         startRotation = transform.rotation;
         float angle = Mathf.Atan2(newDirection.y, newDirection.x) * Mathf.Rad2Deg;
         newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
@@ -154,5 +166,11 @@ public class Movement : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position+(Vector3)newDirection*3);
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position, transform.position+transform.right*3);
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, transform.position+(Vector3)ForceVector);
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawLine(transform.position, transform.position-(Vector3)UnitEvasionVector*3);
+        Gizmos.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+        Gizmos.DrawWireSphere(transform.position,EvasionRadius);
     }
 }

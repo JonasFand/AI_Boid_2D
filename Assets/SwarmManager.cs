@@ -13,6 +13,7 @@ public class SwarmManager : MonoBehaviour
     public GameObject PrefabToSpawn;
     public float DistanceBetweenEntitys = 0.2f;
     public List<Movement> EntityList;
+    public BoxCollider2D Region;
 
     private void Awake()
     {
@@ -44,26 +45,33 @@ public class SwarmManager : MonoBehaviour
         {
             for (int j = 0; j < Amount.x; j++)
             {
-                pos.y = j + DistanceBetweenEntitys;
+                pos.y += DistanceBetweenEntitys;
                 EntityList.Add(Instantiate(PrefabToSpawn, pos, Quaternion.Euler(0, 0, Random.Range(0, 360))).GetComponent<Movement>());
             }
-            pos.x = i + DistanceBetweenEntitys;
+            pos.x += DistanceBetweenEntitys;
             pos.y = 0;
         }
     }
 
     private void OnDrawGizmosSelected()
     {
-        Vector3 pos = transform.position;
+        Vector3 modifier = new Vector3(Amount.x/2, Amount.y/2*DistanceBetweenEntitys, 0);
+        Vector3 pos = transform.position - modifier;
         for (int i = 0; i < Amount.y; i++)
         {
             for (int j = 0; j < Amount.x; j++)
             {
-                pos.y = j + DistanceBetweenEntitys;
+                pos.y = DistanceBetweenEntitys+pos.y;
                 Gizmos.DrawCube(pos,new Vector3(0.5f,0.5f,0.5f));
             }
-            pos.x = i + DistanceBetweenEntitys;
-            pos.y = 0;
+            pos.x = DistanceBetweenEntitys+pos.x;
+            pos.y = -modifier.y;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireCube(Region.transform.position,Region.size);
     }
 }
