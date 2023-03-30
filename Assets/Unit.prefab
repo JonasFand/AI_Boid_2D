@@ -130,10 +130,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28b68add33038c64db2494e4dbda56b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 1.5
+  Speed: 1
   Direction: {x: 0, y: 0}
   ForceVector: {x: 0, y: 0}
   UnitEvasionVector: {x: 0, y: 0}
+  CheckPointVector: {x: 0, y: 0}
   EvasionRadius: 2
   evasionCollider: {fileID: 0}
   collider: {fileID: 7457484104354082146}

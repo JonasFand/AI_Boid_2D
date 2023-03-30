@@ -11,6 +11,7 @@ public class SwarmManager : MonoBehaviour
    
     public Vector2 Amount = new Vector2(2,5);
     public GameObject PrefabToSpawn;
+    public Transform SpawnPoint;
     public float DistanceBetweenEntitys = 0.2f;
     public List<Movement> EntityList;
     public BoxCollider2D Region;
@@ -40,38 +41,44 @@ public class SwarmManager : MonoBehaviour
 
     void Spawn()
     {
-        Vector3 pos = transform.position;
+        Vector3 modifier = new Vector3((Amount.x-1)/2*DistanceBetweenEntitys, (Amount.y-1)/2*DistanceBetweenEntitys, 0);
+        Vector3 pos = SpawnPoint.position;
         for (int i = 0; i < Amount.y; i++)
         {
+            pos.y = SpawnPoint.position.y + i * DistanceBetweenEntitys;
+            pos.y -= modifier.y;
             for (int j = 0; j < Amount.x; j++)
             {
-                pos.y += DistanceBetweenEntitys;
+                pos.x = SpawnPoint.position.x + j * DistanceBetweenEntitys;
+                pos.x -= modifier.x;
                 EntityList.Add(Instantiate(PrefabToSpawn, pos, Quaternion.Euler(0, 0, Random.Range(0, 360))).GetComponent<Movement>());
             }
-            pos.x += DistanceBetweenEntitys;
-            pos.y = 0;
         }
     }
 
     private void OnDrawGizmosSelected()
     {
-        Vector3 modifier = new Vector3(Amount.x/2, Amount.y/2*DistanceBetweenEntitys, 0);
-        Vector3 pos = transform.position - modifier;
-        for (int i = 0; i < Amount.y; i++)
-        {
-            for (int j = 0; j < Amount.x; j++)
-            {
-                pos.y = DistanceBetweenEntitys+pos.y;
-                Gizmos.DrawCube(pos,new Vector3(0.5f,0.5f,0.5f));
-            }
-            pos.x = DistanceBetweenEntitys+pos.x;
-            pos.y = -modifier.y;
-        }
+        
     }
 
     private void OnDrawGizmos()
     {
+        Gizmos.color = Color.blue;
+        Vector3 modifier = new Vector3((Amount.x-1)/2*DistanceBetweenEntitys, (Amount.y-1)/2*DistanceBetweenEntitys, 0);
+        Vector3 pos = SpawnPoint.position-modifier;
+        for (int i = 0; i < Amount.y; i++)
+        {
+            pos.y = SpawnPoint.position.y + i * DistanceBetweenEntitys;
+            pos.y -= modifier.y;
+            for (int j = 0; j < Amount.x; j++)
+            {
+                pos.x = SpawnPoint.position.x + j * DistanceBetweenEntitys;
+                pos.x -= modifier.x;
+                Gizmos.DrawCube(pos,new Vector3(0.5f,0.5f,0.5f));
+            }
+        }
         Gizmos.color = Color.white;
         Gizmos.DrawWireCube(Region.transform.position,Region.size);
+
     }
 }
