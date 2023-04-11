@@ -995,7 +995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d54e2c23df49154d8f573d0768cb8bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Amount: {x: 2, y: 6}
+  Amount: {x: 2, y: 5}
   PrefabToSpawn: {fileID: 1478513817122801853, guid: 8cfa36f0cfe4025478971dc084ee4594, type: 3}
   SpawnPoint: {fileID: 1473400741}
   DistanceBetweenEntitys: 4.5
@@ -1032,8 +1032,8 @@ MonoBehaviour:
   CheckPoint: {fileID: 190969706}
   LayerMask:
     serializedVersion: 2
-    m_Bits: 64
-  EvasionMultiplier: 2
+    m_Bits: 192
+  EvasionMultiplier: 2.5
   CheckPointMultiplier: 0.5
   ForceDivider: 2
 --- !u!1 &519420028
@@ -1851,7 +1851,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1473400740}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 25.88, y: 0.33, z: 0.025991904}
+  m_LocalPosition: {x: 24.19, y: 0.33, z: 0.025991904}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

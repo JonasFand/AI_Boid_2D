@@ -59,69 +59,7 @@ public class Movement : MonoBehaviour
     void Update()
     {
         transform.position += transform.right * (Speed * Time.deltaTime);
-        switch (Behaviour)
-        {
-            case SteeringBehaviour.RandomSteering:
-                RandomSteering();
-                break;
-            case SteeringBehaviour.AttractorSteering:
-                AttractorSteering();
-                break;
-            case SteeringBehaviour.ManagerSteering:
-                ManagerSteering();
-                break;
-        }
-    }
-
-    void RandomSteering()
-    {
-        Debug.Log("random");
-        if (timer<1)
-        {
-            //Direction = Vector2.Lerp(Direction, NewDirection,timer/3);
-            transform.rotation = Quaternion.Lerp(startRotation, newRotation,timer);
-        }
-        else
-        {
-            startRotation = newRotation;
-            transform.rotation = newRotation;
-            newDirection = RandomVector();
-            float angle = Mathf.Atan2(newDirection.y, newDirection.x) * Mathf.Rad2Deg;
-            newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
-            timer = 0;
-        }
-
-        timer += Time.deltaTime/5;
-    }
-
-    
-
-    void AttractorSteering()
-    {
-        Debug.Log("attractor");
-        if (collider.Distance(region).distance>0)
-        {
-            if (timer<1)
-            {
-                //Direction = Vector2.Lerp(Direction, NewDirection,timer/3);
-                transform.rotation = Quaternion.Lerp(startRotation, newRotation,timer);
-            }
-            else
-            {
-                newDirection = region.transform.position - transform.position.normalized;
-                startRotation = transform.rotation;
-                float angle = Mathf.Atan2(newDirection.y, newDirection.x) * Mathf.Rad2Deg;
-                newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
-                timer = 0;
-            }
-
-            timer += Time.deltaTime/2;
-        }
-        else
-        {
-            newDirection = Vector2.zero;
-            timer = 0;
-        }
+        ManagerSteering();
     }
 
     void ManagerSteering()
@@ -141,14 +79,14 @@ public class Movement : MonoBehaviour
     void ApplyNewDirection()
     {
         Direction = transform.right;
-        newDirection = (ForceVector+newDirection)/2;
+        newDirection = (ForceVector+newDirection);
         if (UnitEvasionVector.magnitude>0)
         {
-            newDirection = (newDirection-UnitEvasionVector) / 2;
+            newDirection = (newDirection-UnitEvasionVector);
         }
         if (CheckPointVector.magnitude>0)
         {
-            newDirection = (newDirection+CheckPointVector) / 2;
+            newDirection = (newDirection+CheckPointVector);
         }
         
         
@@ -168,15 +106,15 @@ public class Movement : MonoBehaviour
         
         //Gizmos.DrawWireCube(region.transform.position,region.size);
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position+(Vector3)newDirection.normalized*3);
+        Gizmos.DrawLine(transform.position, transform.position+(Vector3)newDirection.normalized);
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position+transform.right.normalized*3);
+        Gizmos.DrawLine(transform.position, transform.position+transform.right.normalized);
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position, transform.position+(Vector3)ForceVector.normalized*3);
+        Gizmos.DrawLine(transform.position, transform.position+(Vector3)ForceVector);
         Gizmos.color = Color.magenta;
-        Gizmos.DrawLine(transform.position, transform.position-(Vector3)UnitEvasionVector.normalized*3);
+        Gizmos.DrawLine(transform.position, transform.position-(Vector3)UnitEvasionVector);
         Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(transform.position, transform.position+(Vector3)CheckPointVector.normalized*3);
+        Gizmos.DrawLine(transform.position, transform.position+(Vector3)CheckPointVector);
         Gizmos.color = new Color(0.5f, 0.5f, 0.5f, 1f);
         Gizmos.DrawWireSphere(transform.position,EvasionRadius);
     }

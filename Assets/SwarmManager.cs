@@ -9,7 +9,7 @@ public class SwarmManager : MonoBehaviour
 {
     public static SwarmManager Instance { get; private set; }
    
-    public Vector2 Amount = new Vector2(2,5);
+    public Vector2Int Amount = new Vector2Int(2,5);
     public GameObject PrefabToSpawn;
     public Transform SpawnPoint;
     public float DistanceBetweenEntitys = 0.2f;

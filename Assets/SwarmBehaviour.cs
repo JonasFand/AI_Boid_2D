@@ -29,7 +29,16 @@ public class SwarmBehaviour : MonoBehaviour
                 ChangeDirection(entity);
             }
         }
+        
+        if (CheckPoint)
+        {
+            TowardsCheckPoint();
+        }
+        timer += Time.deltaTime;
+    }
 
+    private void FixedUpdate()
+    {
         foreach (var entity in SwarmManager.Instance.EntityList)
         {
             CheckRegion(entity.collider.Distance(Region).distance,entity);
@@ -39,12 +48,6 @@ public class SwarmBehaviour : MonoBehaviour
         {
             CheckEvasion(Physics2D.OverlapCircleAll(entity.transform.position, entity.EvasionRadius, LayerMask).ToList(), entity);
         }
-
-        if (CheckPoint)
-        {
-            TowardsCheckPoint();
-        }
-        timer += Time.deltaTime;
     }
 
     private void TowardsCheckPoint()
@@ -55,8 +58,8 @@ public class SwarmBehaviour : MonoBehaviour
             entity.CheckPointVector = tempVector.normalized * CheckPointMultiplier;
         }
     }
-    
-    void CheckEvasion(List<Collider2D> colliders, Movement entity)
+
+    private void CheckEvasion(List<Collider2D> colliders, Movement entity)
     {
         Vector2 tempVector = Vector2.zero;
         int i = 0;
@@ -66,17 +69,18 @@ public class SwarmBehaviour : MonoBehaviour
         }
         else
         {
-            foreach (var collider in colliders)
+            foreach (var col in colliders.Where(collider => collider != entity.collider))
             {
                 i++;
-                tempVector += (Vector2)collider.transform.position - (Vector2)entity.transform.position;
+                //tempVector += (Vector2)collider.transform.position - (Vector2)entity.transform.position;
+                tempVector += ((Vector2)col.transform.position - (Vector2)entity.transform.position).normalized*(EvasionMultiplier-entity.collider.Distance(col).distance);
             }
             tempVector /= i;
-            entity.UnitEvasionVector = tempVector.normalized*EvasionMultiplier;
+            entity.UnitEvasionVector = tempVector;
         }
     }
-    
-    void CheckRegion(float distance, Movement entity)
+
+    private void CheckRegion(float distance, Movement entity)
     {
         if (distance > 0)
         {
@@ -89,7 +93,7 @@ public class SwarmBehaviour : MonoBehaviour
         }
     }
 
-    void ChangeDirection(Movement entity)
+    static void ChangeDirection(Movement entity)
     {
         Vector2 tempVector = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized +
                              entity.NewDirection;
