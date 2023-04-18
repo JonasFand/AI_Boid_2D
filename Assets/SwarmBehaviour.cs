@@ -12,7 +12,9 @@ public class SwarmBehaviour : MonoBehaviour
     public LayerMask LayerMask;
     public float EvasionMultiplier = 1;
     public float CheckPointMultiplier = 1;
+    public float FormationMultipler = 1;
     public float ForceDivider = 10;
+    public Vector2 GroupCentroid = Vector2.zero;
     private float timer = 0;
     private void Start()
     {
@@ -39,7 +41,14 @@ public class SwarmBehaviour : MonoBehaviour
 
     private void FixedUpdate()
     {
+        CalculateCentroid();
         foreach (var entity in SwarmManager.Instance.EntityList)
+        {
+            CheckRegion(entity.collider.Distance(Region).distance,entity);
+            CheckEvasion(Physics2D.OverlapCircleAll(entity.transform.position, entity.EvasionRadius, LayerMask).ToList(), entity);
+            CheckFormation(entity);
+        }
+        /*foreach (var entity in SwarmManager.Instance.EntityList)
         {
             CheckRegion(entity.collider.Distance(Region).distance,entity);
         }
@@ -48,6 +57,31 @@ public class SwarmBehaviour : MonoBehaviour
         {
             CheckEvasion(Physics2D.OverlapCircleAll(entity.transform.position, entity.EvasionRadius, LayerMask).ToList(), entity);
         }
+
+        CalculateCentroid();
+        foreach (var entity in SwarmManager.Instance.EntityList)
+        {
+            CheckFormation(entity);
+        }*/
+    }
+
+    private void CalculateCentroid()
+    {
+        int i = 0;
+        GroupCentroid = Vector2.zero;
+        foreach (var entity in SwarmManager.Instance.EntityList)
+        {
+            GroupCentroid += (Vector2)entity.transform.position;
+            i++;
+        }
+
+        GroupCentroid /= i;
+    }
+
+    private void CheckFormation(Movement entity)
+    {
+        entity.CentroidVector = (GroupCentroid - (Vector2)entity.transform.position).normalized * (Vector2.Distance(GroupCentroid,(Vector2)entity.transform.position) * FormationMultipler);
+        //entity.CentroidVector.Normalize();
     }
 
     private void TowardsCheckPoint()
@@ -95,8 +129,8 @@ public class SwarmBehaviour : MonoBehaviour
 
     static void ChangeDirection(Movement entity)
     {
-        Vector2 tempVector = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized +
-                             entity.NewDirection;
+        //Vector2 tempVector = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized + entity.NewDirection;
+        Vector2 tempVector = entity.NewDirection;
         entity.NewDirection = tempVector.normalized;
     }
 
@@ -104,5 +138,10 @@ public class SwarmBehaviour : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(CheckPoint.transform.position,2f);
+        if (GroupCentroid.magnitude>0)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(GroupCentroid, 1f);
+        }
     }
 }

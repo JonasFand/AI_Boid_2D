@@ -31,6 +31,7 @@ public class Movement : MonoBehaviour
     public Vector2 ForceVector = Vector2.zero;
     public Vector2 UnitEvasionVector = Vector2.zero;
     public Vector2 CheckPointVector = Vector2.zero;
+    public Vector2 CentroidVector = Vector2.zero;
     public float EvasionRadius;
     private BoxCollider2D region;
     [SerializeField]private CircleCollider2D evasionCollider;
@@ -88,6 +89,10 @@ public class Movement : MonoBehaviour
         {
             newDirection = (newDirection+CheckPointVector);
         }
+        if (CheckPointVector.magnitude>0)
+        {
+            newDirection = (newDirection+CentroidVector);
+        }
         
         
         newDirection.Normalize();
@@ -114,6 +119,8 @@ public class Movement : MonoBehaviour
         Gizmos.color = Color.magenta;
         Gizmos.DrawLine(transform.position, transform.position-(Vector3)UnitEvasionVector);
         Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, transform.position+(Vector3)CentroidVector);
+        Gizmos.color = Color.cyan;
         Gizmos.DrawLine(transform.position, transform.position+(Vector3)CheckPointVector);
         Gizmos.color = new Color(0.5f, 0.5f, 0.5f, 1f);
         Gizmos.DrawWireSphere(transform.position,EvasionRadius);
