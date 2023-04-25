@@ -3,13 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
-
-public enum SteeringBehaviour
-{
-    RandomSteering,
-    AttractorSteering,
-    ManagerSteering,
-}
 public class Movement : MonoBehaviour
 {
     [Range(0,5)]
@@ -39,7 +32,6 @@ public class Movement : MonoBehaviour
     [SerializeField]private float timer = 0;
     Quaternion startRotation;
     Quaternion newRotation;
-    public SteeringBehaviour Behaviour = SteeringBehaviour.RandomSteering;
     private bool colliderExit;
 
     private void Awake()
@@ -59,8 +51,10 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        transform.position += transform.right * (Speed * Time.deltaTime);
-        ManagerSteering();
+       //transform.position += transform.right * (Speed * Time.deltaTime);
+       ManagerSteering();
+       transform.position += (Vector3)newDirection.normalized * (Speed * Time.deltaTime);
+       
     }
 
     void ManagerSteering()
